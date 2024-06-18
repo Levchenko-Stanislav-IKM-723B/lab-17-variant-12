@@ -1,0 +1,78 @@
+#include <iostream>
+
+class HexCounter {
+public:
+    HexCounter(int value = 0, int min_value = 0, int max_value = 0xF)
+        : value(value), min_value(min_value), max_value(max_value) {}
+
+    void increment() {
+        if (value < max_value) {
+            value++;
+        } else {
+            value = min_value;
+        }
+    }
+
+    void decrement() {
+        if (value > min_value) {
+            value--;
+        } else {
+            value = max_value;
+        }
+    }
+
+    int currentValue() const {
+        return value;
+    }
+
+protected:
+    int value;
+    int min_value;
+    int max_value;
+};
+
+class ExtendedHexCounter : public HexCounter {
+public:
+    ExtendedHexCounter(int value = 0, int min_value = 0, int max_value = 0xF)
+        : HexCounter(value, min_value, max_value) {}
+
+    void changeBy(int amount) {
+        int new_value = value + amount;
+        if (new_value > max_value) {
+            value = min_value + (new_value - max_value - 1);
+        } else if (new_value < min_value) {
+            value = max_value - (min_value - new_value - 1);
+        } else {
+            value = new_value;
+        }
+    }
+};
+
+int main() {
+    // Створення об'єкта класу HexCounter з параметрами за замовчуванням
+    HexCounter counter1;
+    std::cout << "Initial value (default): " << counter1.currentValue() << std::endl;
+
+    // Збільшення значення лічильника
+    counter1.increment();
+    std::cout << "After increment: " << counter1.currentValue() << std::endl;
+
+    // Зменшення значення лічильника
+    counter1.decrement();
+    counter1.decrement();  // Щоб побачити роботу зменшення від мінімального значення
+    std::cout << "After decrement: " << counter1.currentValue() << std::endl;
+
+    // Створення об'єкта класу ExtendedHexCounter з довільними параметрами
+    ExtendedHexCounter counter2(5, 0, 0xF);
+    std::cout << "Initial value (custom): " << counter2.currentValue() << std::endl;
+
+    // Збільшення значення на довільне число
+    counter2.changeBy(3);
+    std::cout << "After changeBy(3): " << counter2.currentValue() << std::endl;
+
+    // Зменшення значення на довільне число
+    counter2.changeBy(-8);
+    std::cout << "After changeBy(-8): " << counter2.currentValue() << std::endl;
+
+    return 0;
+}
